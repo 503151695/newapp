@@ -175,6 +175,13 @@
                     android:layout_below="@+id/btn_left"
                     android:layout_centerHorizontal="true"/>
             </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Lin_hvmode"
+                android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -275,6 +282,13 @@
                 android:max="180"
                 android:progress="20"/>
 
+            </LinearLayout>//--hvmode end
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Lin_mvmode"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -333,7 +347,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="飞行速度(10-100cm/s):"/>
+                    android:text="飞行速度(1-10m/s):"/>
                 <AutoCompleteTextView
                     android:id="@+id/mv_speed"
                     android:layout_width="wrap_content"
@@ -341,15 +355,23 @@
                     android:inputType="number"
                     android:maxLines="1"
                     android:ems="2"
-                    android:hint="50"
+                    android:hint="1"
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
                 android:id="@+id/seek_mv_speed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="50"
-                android:progress="50"/>
+                android:max="10"
+                android:progress="1"/>
+
+        </LinearLayout>//--mvmode end
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Lin_hsmode"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -452,6 +474,14 @@
                 android:max="180"
                 android:progress="20"/>
 
+        </LinearLayout>//--hsmode end
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Lin_msmode"
+            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -510,7 +540,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="飞行速度(10-100cm/s):"/>
+                    android:text="飞行速度(1-10m/s):"/>
                 <AutoCompleteTextView
                     android:id="@+id/ms_speed"
                     android:layout_width="wrap_content"
@@ -518,15 +548,17 @@
                     android:inputType="number"
                     android:maxLines="1"
                     android:ems="2"
-                    android:hint="50"
+                    android:hint="1"
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
                 android:id="@+id/seek_ms_speed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="50"
-                android:progress="50"/>
+                android:max="10"
+                android:progress="1"/>
+
+        </LinearLayout>//--msmode end
             <Button
                 android:id="@+id/to_option3"
                 android:layout_width="wrap_content"

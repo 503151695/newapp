@@ -11,9 +11,9 @@
         android:orientation="horizontal">
         <TextView
             android:id="@+id/ConnectStatusTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="GSDemo"
+            android:text="无人机载辐射环境监测系统"
             android:gravity="center"
             android:textColor="#000000"
             android:textSize="21sp"
@@ -37,51 +37,22 @@
                     android:id="@+id/locate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Locate"
+                    android:text="锁定无人机位置"
                     android:layout_weight="1"/>
                 <Button
                     android:id="@+id/add"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Add"
+                    android:text="从地图选择基点"
                     android:layout_weight="1"/>
                 <Button
                     android:id="@+id/clear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Clear"
+                    android:text="清除地图标记"
                     android:layout_weight="1"/>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/config"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Config"
-                    android:layout_weight="0.9"/>
-                <Button
-                    android:id="@+id/upload"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Upload"
-                    android:layout_weight="0.9"/>
-                <Button
-                    android:id="@+id/start"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Start"
-                    android:layout_weight="1"/>
-                <Button
-                    android:id="@+id/stop"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Stop"
-                    android:layout_weight="1"/>
-            </LinearLayout>
             //--mtr
             <LinearLayout
                 android:layout_width="match_parent"

@@ -88,6 +88,7 @@ import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
+
 public class MainActivity extends FragmentActivity implements View.OnClickListener,
         OnMapClickListener,LocationSource,AMapLocationListener,SeekBar.OnSeekBarChangeListener,TextWatcher{
 
@@ -148,10 +149,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected double homeLatitude = 181;
     protected double homeLongitude = 181;
     protected  LatLng homelatlng;
-    private float StartHigh = 2;
-    private float Interval = 2;
-    private int TestPoints = 5;
-    private int SinglePointTime = 10;
+    private LinearLayout hvmode,mvmode,hsmode,msmode;
+
     //--
     @Override
     protected void onResume(){
@@ -204,10 +203,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         locate = (Button) findViewById(R.id.locate);
         add = (Button) findViewById(R.id.add);
         clear = (Button) findViewById(R.id.clear);
-        config = (Button) findViewById(R.id.config);
-        upload = (Button) findViewById(R.id.upload);
-        start = (Button) findViewById(R.id.start);
-        stop = (Button) findViewById(R.id.stop);
+        //config = (Button) findViewById(R.id.config);
+        //upload = (Button) findViewById(R.id.upload);
+        //start = (Button) findViewById(R.id.start);
+        //stop = (Button) findViewById(R.id.stop);
 
         mydatashow = (TextView) findViewById(R.id.datashow);
         mission_type = (Spinner) findViewById(R.id.mission_type);
@@ -262,7 +261,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         seek_ms_radius = (SeekBar) findViewById(R.id.seek_ms_radius);
         seek_ms_speed = (SeekBar) findViewById(R.id.seek_ms_speed);
 
-
+        hvmode = (LinearLayout) findViewById(R.id.Lin_hvmode);
+        mvmode = (LinearLayout) findViewById(R.id.Lin_mvmode);
+        hsmode = (LinearLayout) findViewById(R.id.Lin_hsmode);
+        msmode = (LinearLayout) findViewById(R.id.Lin_msmode);
 
         hv_high.addTextChangedListener(this);
         hv_interval.addTextChangedListener(this);
@@ -310,25 +312,41 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
         clear.setOnClickListener(this);
-        config.setOnClickListener(this);
-        upload.setOnClickListener(this);
-        start.setOnClickListener(this);
-        stop.setOnClickListener(this);
+        //config.setOnClickListener(this);
+        //upload.setOnClickListener(this);
+        //start.setOnClickListener(this);
+        //stop.setOnClickListener(this);
         mission_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 switch(pos){
                     case 1:
                         mMissionMode = MissionMode.VERTICAL_HOVER;
+                        hvmode.setVisibility(View.VISIBLE);
+                        mvmode.setVisibility(View.GONE);
+                        hsmode.setVisibility(View.GONE);
+                        msmode.setVisibility(View.GONE);
                         break;
                     case 2:
                         mMissionMode = MissionMode.VERTICAL_MOVE;
+                        hvmode.setVisibility(View.GONE);
+                        mvmode.setVisibility(View.VISIBLE);
+                        hsmode.setVisibility(View.GONE);
+                        msmode.setVisibility(View.GONE);
                         break;
                     case 3:
                         mMissionMode = MissionMode.SURROUND_HOVER;
+                        hvmode.setVisibility(View.GONE);
+                        mvmode.setVisibility(View.GONE);
+                        hsmode.setVisibility(View.VISIBLE);
+                        msmode.setVisibility(View.GONE);
                         break;
                     case 4:
                         mMissionMode = MissionMode.SURROUND_MOVE;
+                        hvmode.setVisibility(View.GONE);
+                        mvmode.setVisibility(View.GONE);
+                        hsmode.setVisibility(View.GONE);
+                        msmode.setVisibility(View.VISIBLE);
                         break;
                     case 5:
                         mMissionMode = MissionMode.HORIZONTAL_HOVER;
@@ -612,6 +630,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 updateDroneLocation();
                 break;
             }
+            /*
             case R.id.config:{
                 configTimeline();
                 //configMission();
@@ -631,7 +650,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.stop:{
                 stopWaypointMission();
                 break;
-            }
+            }*/
             case R.id.to_option2:
                 task_name = mission_name.getText().toString();
                 task_addr = mission_addr.getText().toString();
@@ -701,96 +720,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void enableDisableAdd(){
         if (isAdd == false) {
             isAdd = true;
-            add.setText("Exit");
+            add.setText("退出选择模式");
         }else{
             isAdd = false;
-            add.setText("Add");
+            add.setText("从地图选择基点");
         }
     }
 
-    private void showSettingDialog(){
-        LinearLayout wayPointSettings = (LinearLayout)getLayoutInflater().inflate(R.layout.dialog_waypointsetting, null);
-
-        final TextView wpAltitude_TV = (TextView) wayPointSettings.findViewById(R.id.altitude);
-        RadioGroup speed_RG = (RadioGroup) wayPointSettings.findViewById(R.id.speed);
-        RadioGroup actionAfterFinished_RG = (RadioGroup) wayPointSettings.findViewById(R.id.actionAfterFinished);
-        RadioGroup heading_RG = (RadioGroup) wayPointSettings.findViewById(R.id.heading);
-
-        speed_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.lowSpeed){
-                    mSpeed = 3.0f;
-                } else if (checkedId == R.id.MidSpeed){
-                    mSpeed = 5.0f;
-                } else if (checkedId == R.id.HighSpeed){
-                    mSpeed = 10.0f;
-                }
-            }
-
-        });
-
-        actionAfterFinished_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.d(TAG, "Select finish action");
-                if (checkedId == R.id.finishNone){
-                    mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
-                } else if (checkedId == R.id.finishGoHome){
-                    mFinishedAction = WaypointMissionFinishedAction.GO_HOME;
-                } else if (checkedId == R.id.finishAutoLanding){
-                    mFinishedAction = WaypointMissionFinishedAction.AUTO_LAND;
-                } else if (checkedId == R.id.finishToFirst){
-                    mFinishedAction = WaypointMissionFinishedAction.GO_FIRST_WAYPOINT;
-                }
-            }
-        });
-
-        heading_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.d(TAG, "Select heading");
-
-                if (checkedId == R.id.headingNext) {
-                    mHeadingMode = WaypointMissionHeadingMode.AUTO;
-                } else if (checkedId == R.id.headingInitDirec) {
-                    mHeadingMode = WaypointMissionHeadingMode.USING_INITIAL_DIRECTION;
-                } else if (checkedId == R.id.headingRC) {
-                    mHeadingMode = WaypointMissionHeadingMode.CONTROL_BY_REMOTE_CONTROLLER;
-                } else if (checkedId == R.id.headingWP) {
-                    mHeadingMode = WaypointMissionHeadingMode.USING_WAYPOINT_HEADING;
-                }
-            }
-        });
-
-        new AlertDialog.Builder(this)
-                .setTitle("")
-                .setView(wayPointSettings)
-                .setPositiveButton("Finish",new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        String altitudeString = wpAltitude_TV.getText().toString();
-                        altitude = Integer.parseInt(nulltoIntegerDefalt(altitudeString));
-                        Log.e(TAG,"altitude "+altitude);
-                        Log.e(TAG,"speed "+mSpeed);
-                        Log.e(TAG, "mFinishedAction "+mFinishedAction);
-                        Log.e(TAG, "mHeadingMode "+mHeadingMode);
-                        configWayPointMission();
-                    }
-
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-
-                })
-                .create()
-                .show();
-    }
 
     String nulltoIntegerDefalt(String value){
         if(!isIntValue(value)) value="0";
@@ -883,17 +819,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void configMoveVerticalMode(){
-        if (waypointMissionBuilder == null) {
+        //if (waypointMissionBuilder == null) {
             waypointMissionBuilder = new WaypointMission.Builder();
-        }
+       // }
 
         final Waypoint startWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
-                movsud.qsgd_ptr);
+                movsud.mv_high);
         startWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, 1000));
         waypointList.add(startWaypoint);
 
         final Waypoint endWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
-                movsud.qsgd_ptr + movsud.gdjg_ptr);
+                movsud.mv_high + movsud.mv_interval);
         endWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, 1000));
         waypointList.add(endWaypoint);
 
@@ -904,8 +840,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         waypointMissionBuilder.finishedAction(WaypointMissionFinishedAction.GO_HOME)
                 .headingMode(WaypointMissionHeadingMode.AUTO)
-                .autoFlightSpeed(movsud.jcfxsd_ptr)
-                .maxFlightSpeed(movsud.jcfxsd_ptr)
+                .autoFlightSpeed(movsud.mv_speed)
+                .maxFlightSpeed(10)
                 .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
 
         DJIError error = getWaypointMissionOperator().loadMission(waypointMissionBuilder.build());
@@ -918,15 +854,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private void configHoverVerticalMode(){
         //Waypoint mWaypoint = new Waypoint(BasicPointLat, BasicPointLng, altitude);
-        if (waypointMissionBuilder == null) {
+        //if (waypointMissionBuilder == null) {
             waypointMissionBuilder = new WaypointMission.Builder();
-        }
+        //}
 
-        for(int i=0; i < movsud.jcds_ptr; i++){
+        for(int i=0; i < movsud.hv_numbers; i++){
 
             final Waypoint eachWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
-                    movsud.qsgd_ptr + movsud.gdjg_ptr * i);
-            eachWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, (int)movsud.ddcjsj_ptr * 1000));
+                    movsud.hv_high + movsud.hv_interval * i);
+            eachWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, (int)movsud.hv_time * 1000));
             waypointList.add(eachWaypoint);
             waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
 
@@ -952,35 +888,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void configHoverSurroundMode(){
-        if (waypointMissionBuilder == null) {
-            waypointMissionBuilder = new WaypointMission.Builder();
-        }
 
-        for(int i=0; i < movsud.jcds_ptr; i++){
-
-            final Waypoint eachWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
-                    movsud.qsgd_ptr + movsud.gdjg_ptr * i);
-            eachWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, (int)movsud.ddcjsj_ptr * 1000));
-            waypointList.add(eachWaypoint);
-            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
-
-
-        }
-        //waypointMissionBuilder.waypointList(waypointList).waypointCount( TestPoints);
-
-
-        waypointMissionBuilder.finishedAction(WaypointMissionFinishedAction.GO_HOME)
-                .headingMode(WaypointMissionHeadingMode.AUTO)
-                .autoFlightSpeed(5f)
-                .maxFlightSpeed(10f)
-                .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
-
-        DJIError error = getWaypointMissionOperator().loadMission(waypointMissionBuilder.build());
-        if (error == null) {
-            setResultToToast("loadWaypoint succeeded");
-        } else {
-            setResultToToast("loadWaypoint failed " + error.getDescription());
-        }
     }
 
 
@@ -1010,14 +918,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         setResultToToast("Step 2: start a hotpoint mission to surround 360 degree");
         HotpointMission hotpointMission = new HotpointMission();
         hotpointMission.setHotpoint(new LocationCoordinate2D(movsud.BasicLat,movsud.BasicLng));
-        hotpointMission.setAltitude(movsud.jcgd_ptr);
-        hotpointMission.setRadius(movsud.hrbj_ptr);
-        hotpointMission.setAngularVelocity(movsud.jcfxsd_ptr);
+        hotpointMission.setAltitude(movsud.ms_high);
+        hotpointMission.setRadius(movsud.ms_radius);
+        hotpointMission.setAngularVelocity(movsud.ms_speed);
         HotpointStartPoint startPoint = HotpointStartPoint.NEAREST;
         hotpointMission.setStartPoint(startPoint);
         HotpointHeading heading = HotpointHeading.TOWARDS_HOT_POINT;
         hotpointMission.setHeading(heading);
-        elements.add(new HotpointAction(hotpointMission, 361));
+        elements.add(new HotpointAction(hotpointMission, 362));
 
         //Step 3: Go 10 meters from home point
     //    setResultToToast("Step 3: Go 10 meters from home point");
@@ -1041,8 +949,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             setResultToToast("Init the timeline first by clicking the Init button");
         }
     }
-
-
     private void updateTimelineStatus(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
 
         if (element != null) {
@@ -1089,7 +995,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         + "\nhome point longitude: "
                         + homelatlng.longitude);
 
-                LatLng latlng1 = getGCJ02Location(homelatlng);
+                LatLng latlng1 = GCJ2WGS.getGCJ02Location(homelatlng);
                 setResultToToast("home point latitude: "
                         + latlng1.latitude
                         + "\nhome point longitude: "
@@ -1104,17 +1010,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
-    private static LatLng getGCJ02Location(LatLng pos){
-        //--GPS转换为高德坐标系
-        CoordinateConverter converter  = new CoordinateConverter();
-        // CoordType.GPS 待转换坐标类型
-        converter.from(CoordinateConverter.CoordType.GPS);
-        // sourceLatLng待转换坐标点 DPoint类型
-        converter.coord(pos);
-        // 执行转换操作
-        LatLng desLatLng = converter.convert();
-        return  desLatLng;
-    }
 
     private void setMission(){
 
@@ -1255,37 +1150,65 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()){
-            /*
-            case R.id.seek_qsgd:
-//                et_qsgd.setText(progress+"");
+            case R.id.seek_hv_high:
+                hv_high.setText(progress+"");
+                movsud.sethv_high(progress);
+                break;
+            case R.id.seek_hv_interval:
+                hv_interval.setText(progress+"");
+                movsud.sethv_interval(progress);
+                break;
+            case R.id.seek_hv_numbers:
+                hv_numbers.setText(progress+"");
+                movsud.sethv_numbers(progress);
+                break;
+            case R.id.seek_hv_time:
+                hv_time.setText(progress+"");
+                movsud.sethv_time(progress);
+                break;
 
-                movsud.setQsgd_ptr(progress);
+            case R.id.seek_mv_high:
+                mv_high.setText(progress+"");
+                movsud.setmv_high(progress);
                 break;
-            case R.id.seek_gdjg:
-//                et_gdjg.setText(progress+"");
-                movsud.setGdjg_ptr(progress);
+            case R.id.seek_mv_interval:
+                mv_interval.setText(progress+"");
+                movsud.setmv_interval(progress);
                 break;
-            case R.id.seek_jcds:
-//                et_jcds.setText(progress+"");
-                movsud.setJcds_ptr(progress);
+            case R.id.seek_mv_speed:
+                mv_speed.setText(progress+"");
+                movsud.setmv_speed(progress);
                 break;
-            case R.id.seek_ddcjsj:
-//                et_ddcjsj.setText(progress+"");
-                movsud.setDdcjsj_ptr(progress);
+
+            case R.id.seek_hs_high:
+                hs_high.setText(progress+"");
+                movsud.seths_high(progress);
                 break;
-            case R.id.seek_jcgd:
-//                et_jcgd.setText(progress+"");
-                movsud.setJcgd_ptr(progress);
+            case R.id.seek_hs_numbers:
+                hs_numbers.setText(progress+"");
+                movsud.seths_numbers(progress);
                 break;
-            case R.id.seek_jcfxsd:
-//                et_jcfxsd.setText(progress+"");
-                movsud.setJcfxsd_ptr(progress);
+            case R.id.seek_hs_radius:
+                hs_radius.setText(progress+"");
+                movsud.seths_radius(progress);
                 break;
-            case R.id.seek_hrbj:
-//                et_hrbj.setText(progress+"");
-                movsud.setHrbj_ptr(progress);
+            case R.id.seek_hs_time:
+                hs_time.setText(progress+"");
+                movsud.seths_time(progress);
                 break;
-                */
+
+            case R.id.seek_ms_high:
+                ms_high.setText(progress+"");
+                movsud.setms_high(progress);
+                break;
+            case R.id.seek_ms_radius:
+                ms_radius.setText(progress+"");
+                movsud.setms_radius(progress);
+                break;
+            case R.id.seek_ms_speed:
+                ms_speed.setText(progress+"");
+                movsud.setms_speed(progress);
+                break;
             default:
                 break;
         }

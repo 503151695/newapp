@@ -1,5 +1,6 @@
 package com.dji.GSDemo.GaodeMap;
 
+import com.amap.api.maps2d.CoordinateConverter;
 import com.amap.api.maps2d.model.LatLng;
 
 import java.util.HashMap;
@@ -9,6 +10,19 @@ import java.util.HashMap;
  */
 
 public class GCJ2WGS {
+
+    public static LatLng getGCJ02Location(LatLng pos){
+        //--GPS转换为高德坐标系
+        CoordinateConverter converter  = new CoordinateConverter();
+        // CoordType.GPS 待转换坐标类型
+        converter.from(CoordinateConverter.CoordType.GPS);
+        // sourceLatLng待转换坐标点 DPoint类型
+        converter.coord(pos);
+        // 执行转换操作
+        LatLng desLatLng = converter.convert();
+        return  desLatLng;
+    }
+
     public static LatLng getWGS84Location(LatLng pos){
         GCJ2WGS wg = new GCJ2WGS();
 
@@ -17,23 +31,11 @@ public class GCJ2WGS {
 
         return latlng;
     }
-    public static void main(String[] args) {
 
-        GCJ2WGS wg = new GCJ2WGS();
-
-        HashMap<String, Double> hm = wg.delta(38.123456,114.654321);
-
-        System.out.println(hm);
-    }
     //圆周率 GCJ_02_To_WGS_84
     double PI = 3.14159265358979324;
-    /**
-     * @author 作者:
-     * 方法描述:方法可以将高德地图SDK获取到的GPS经纬度转换为真实的经纬度，可以用于解决安卓系统使用高德SDK获取经纬度的转换问题。
-     * @param 需要转换的经纬度
-     * @return 转换为真实GPS坐标后的经纬度
-     * @throws <异常类型> {@inheritDoc} 异常描述
-     */
+
+
     public HashMap<String, Double> delta(double lat,double lon) {
         double a = 6378245.0;
         double ee = 0.00669342162296594323;
