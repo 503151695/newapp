@@ -1255,6 +1255,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()){
+            /*
             case R.id.seek_qsgd:
 //                et_qsgd.setText(progress+"");
 
@@ -1284,6 +1285,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                et_hrbj.setText(progress+"");
                 movsud.setHrbj_ptr(progress);
                 break;
+                */
             default:
                 break;
         }
