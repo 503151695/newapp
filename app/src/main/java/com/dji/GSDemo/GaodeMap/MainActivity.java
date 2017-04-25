@@ -27,6 +27,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.lang.String;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -485,7 +486,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 public void onReceive(byte[] bytes) {
                     //setResultToToast("DataTransmission ok");
                     String str = new String(bytes);
-                    mydatashow.setText(str);
+                        String aa[] = str.split("\\|");
+                    mydatashow.setText("实时值：" + aa[0].substring(7) + "V/m");
                     //Toast.makeText(MainActivity.this,str , Toast.LENGTH_SHORT).show();
                 }
             });
