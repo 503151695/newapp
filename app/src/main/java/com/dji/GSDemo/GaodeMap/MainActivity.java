@@ -3,11 +3,14 @@ package com.dji.GSDemo.GaodeMap;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -27,6 +30,8 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 import java.lang.String;
 
 import com.amap.api.location.AMapLocation;
@@ -48,6 +53,7 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.dji.GSDemo.GaodeMap.excel.ExcelUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +62,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import db.DBHelper;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.mission.hotpoint.HotpointHeading;
 import dji.common.mission.hotpoint.HotpointMission;
@@ -88,6 +95,7 @@ import dji.sdk.mission.waypoint.WaypointMissionOperator;
 import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
+
 
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener,
@@ -158,6 +166,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected double homeLongitude = 181;
     protected  LatLng homelatlng;
     private LinearLayout hvmode,mvmode,hsmode,msmode;
+
+    //--data
+    private File file;
+    private String[] title = { "日期", "食物支出", "日用品项", "交通话费", "旅游出行", "穿着支出", "医疗保健", "人情客往", "宝宝专项", "房租水电", "其它支出", "备注说明" };
+    private String[] saveData;
+    private DBHelper mDbHelper;
+    private ArrayList<ArrayList<String>>bill2List;
 
     //--
     @Override
@@ -432,6 +447,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         initMapView();
         initUI();
         addListener();
+        //--data
+        mDbHelper = new DBHelper(this);
+        mDbHelper.open();
+        bill2List=new ArrayList<ArrayList<String>>();
 
     }
 
@@ -497,9 +516,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             mFlightController.setOnboardSDKDeviceDataCallback(new FlightController.OnboardSDKDeviceDataCallback() {
                 @Override
                 public void onReceive(byte[] bytes) {
-                    //setResultToToast("DataTransmission ok");
                     String str = new String(bytes);
                         String aa[] = str.split("\\|");
+                    ContentValues values = new ContentValues();
+                    values.put("food", aa[0].substring(7));
+                    values.put("use" , aa[1]);
+                    //values.put("lat" , aa[2]);
+                    //values.put("lng" , aa[3]);
+                    long insert = mDbHelper.insert("family_bill", values);
+                    if (insert > 0) {
+                        initData();
+                    }
                     mydatashow.setText("实时值：" + aa[0].substring(7) + "V/m");
                     //Toast.makeText(MainActivity.this,str , Toast.LENGTH_SHORT).show();
                 }
@@ -1307,4 +1334,54 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void afterTextChanged(Editable s) {
 
     }
+
+    //--data
+    public void initData() {
+        file = new File(getSDPath() + "/Family");
+        makeDir(file);
+        ExcelUtils.initExcel(file.toString() + "/bill.xls", title);
+        ExcelUtils.writeObjListToExcel(getBillData(), getSDPath() + "/Family/bill.xls", this);
+        setResultToToast(""+ file);/////
+    }
+    private ArrayList<ArrayList<String>> getBillData() {
+        Cursor mCrusor = mDbHelper.exeSql("select * from family_bill");
+        while (mCrusor.moveToNext()) {
+            ArrayList<String> beanList=new ArrayList<String>();
+            beanList.add(mCrusor.getString(1));
+            beanList.add(mCrusor.getString(2));
+            beanList.add(mCrusor.getString(3));
+            beanList.add(mCrusor.getString(4));
+            beanList.add(mCrusor.getString(5));
+            beanList.add(mCrusor.getString(6));
+            beanList.add(mCrusor.getString(7));
+            beanList.add(mCrusor.getString(8));
+            beanList.add(mCrusor.getString(9));
+            beanList.add(mCrusor.getString(10));
+            beanList.add(mCrusor.getString(11));
+            beanList.add(mCrusor.getString(12));
+            bill2List.add(beanList);
+        }
+        mCrusor.close();
+        return bill2List;
+    }
+
+    public static void makeDir(File dir) {
+        if (!dir.getParentFile().exists()) {
+            makeDir(dir.getParentFile());
+        }
+        dir.mkdir();
+    }
+
+    public String getSDPath() {
+        File sdDir = null;
+        boolean sdCardExist = Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+        if (sdCardExist) {
+            sdDir = Environment.getExternalStorageDirectory();
+        }
+        String dir = sdDir.toString();
+        return dir;
+
+    }
+
+
 }

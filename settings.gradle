@@ -1,2 +1,2 @@
-include ':app', ':AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120'
+include ':app', ':AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120', ':jxl'
 include ':dJISDKLIB'
