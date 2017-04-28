@@ -49,7 +49,7 @@
                     android:id="@+id/clear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="清除地图标记"
+                    android:text="导出excel数据"
                     android:layout_weight="1"/>
             </LinearLayout>
 

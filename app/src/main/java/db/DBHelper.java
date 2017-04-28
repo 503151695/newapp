@@ -29,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table if not exists family_bill(id integer primary key,time text,food text,use text,traffic text,travel text,clothes text,doctor text,laiwang text,baby text,live text,other text,remark text)";
+        String sql = "create table if not exists family_bill(id integer primary key autoincrement,data text,date text,time text,lat text,lng text,high text,xspeed text,yspeed text,zspeed text,live text,other text,remark text)";
         db.execSQL(sql);
     }
 

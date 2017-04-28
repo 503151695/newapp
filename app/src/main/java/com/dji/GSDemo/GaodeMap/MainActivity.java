@@ -169,7 +169,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     //--data
     private File file;
-    private String[] title = { "日期", "食物支出", "日用品项", "交通话费", "旅游出行", "穿着支出", "医疗保健", "人情客往", "宝宝专项", "房租水电", "其它支出", "备注说明" };
+    private String[] title = { "编号", "实时值", "采集日期","采集时间", "纬度", "经度", "高度", "X轴速度", "Y轴速度", "Z轴速度" };
     private String[] saveData;
     private DBHelper mDbHelper;
     private ArrayList<ArrayList<String>>bill2List;
@@ -518,17 +518,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 public void onReceive(byte[] bytes) {
                     String str = new String(bytes);
                         String aa[] = str.split("\\|");
+                    //mydatashow.setText(str);
                     ContentValues values = new ContentValues();
-                    values.put("food", aa[0].substring(7));
-                    values.put("use" , aa[1]);
-                    //values.put("lat" , aa[2]);
-                    //values.put("lng" , aa[3]);
-                    long insert = mDbHelper.insert("family_bill", values);
-                    if (insert > 0) {
-                        initData();
-                    }
+                    values.put("data", aa[0].substring(7));
+                    values.put("date" , aa[1]);
+                    values.put("time" , aa[2]);
+                    //values.put("lat" , aa[3]);
+                    //values.put("lng" , aa[4]);
+                    //values.put("xspeed" , aa[5]);
+                    //values.put("yspeed" , aa[6]);
+                    //values.put("zspeed" , aa[7]);
+                        long insert = mDbHelper.insert("family_bill", values);
                     mydatashow.setText("实时值：" + aa[0].substring(7) + "V/m");
-                    //Toast.makeText(MainActivity.this,str , Toast.LENGTH_SHORT).show();
+
+                    //if (insert > 0) {
+                    //    initData();
+                    //}
+
                 }
             });
         }
@@ -663,6 +669,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
             }
             case R.id.clear: {
+                    initData();//-- 生成excel
+                break;
+            }
+                /*
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -674,7 +684,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 waypointMissionBuilder.waypointList(waypointList);
                 updateDroneLocation();
                 break;
-            }
+            }*/
             /*
             case R.id.config:{
                 configTimeline();
@@ -1337,16 +1347,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     //--data
     public void initData() {
-        file = new File(getSDPath() + "/Family");
+        file = new File(getSDPath() + "/SafetyTech");
         makeDir(file);
-        ExcelUtils.initExcel(file.toString() + "/bill.xls", title);
-        ExcelUtils.writeObjListToExcel(getBillData(), getSDPath() + "/Family/bill.xls", this);
-        setResultToToast(""+ file);/////
+        ExcelUtils.initExcel(file.toString() + "/"+task_name.toString()+".xls", title);
+        ExcelUtils.writeObjListToExcel(getBillData(), getSDPath() + "/SafetyTech/"+task_name.toString()+".xls", this);
     }
     private ArrayList<ArrayList<String>> getBillData() {
         Cursor mCrusor = mDbHelper.exeSql("select * from family_bill");
         while (mCrusor.moveToNext()) {
             ArrayList<String> beanList=new ArrayList<String>();
+            beanList.add(mCrusor.getString(0));
             beanList.add(mCrusor.getString(1));
             beanList.add(mCrusor.getString(2));
             beanList.add(mCrusor.getString(3));
@@ -1356,9 +1366,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             beanList.add(mCrusor.getString(7));
             beanList.add(mCrusor.getString(8));
             beanList.add(mCrusor.getString(9));
-            beanList.add(mCrusor.getString(10));
-            beanList.add(mCrusor.getString(11));
-            beanList.add(mCrusor.getString(12));
+
             bill2List.add(beanList);
         }
         mCrusor.close();
