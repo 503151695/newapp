@@ -181,6 +181,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private LinearLayout hvmode,mvmode,hsmode,msmode;
 
     //--data
+    private TabLayout tab_bottom;
+    private FrameLayout data,camera;
+    private LinearLayout map_container;
     private File file;
     private String[] title = { "编号", "实时值", "采集日期","采集时间", "纬度", "经度", "高度", "X轴速度", "Y轴速度", "Z轴速度" };
     private String[] saveData;
@@ -366,6 +369,38 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         //upload.setOnClickListener(this);
         //start.setOnClickListener(this);
         //stop.setOnClickListener(this);
+        tab_bottom.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                switch (position){
+                    case 0:
+                        map_container.setVisibility(View.VISIBLE);
+                        data.setVisibility(View.GONE);
+                        camera.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        map_container.setVisibility(View.GONE);
+                        data.setVisibility(View.VISIBLE);
+                        camera.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        map_container.setVisibility(View.GONE);
+                        data.setVisibility(View.GONE);
+                        camera.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         mission_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
