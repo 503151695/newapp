@@ -255,6 +255,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         data = (FrameLayout) findViewById(R.id.data);
         camera = (FrameLayout) findViewById(R.id.camera);
         tab_bottom = (TabLayout) findViewById(R.id.tab_bottom);
+        //--
         //------------------------------------------------------------------------------------------
 
         mydatashow = (TextView) findViewById(R.id.datashow);
