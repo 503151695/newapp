@@ -50,4 +50,6 @@ dependencies {
     compile project(':dJISDKLIB')
     compile project(':AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120')
     compile project(':jxl')
+    compile project(':hellocharts-library-1.5.8')
+
 }

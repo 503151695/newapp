@@ -58,12 +58,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+                <lecho.lib.hellocharts.view.LineChartView
+                    android:id="@+id/line_chart"
+                    android:layout_width="fill_parent"
+                    android:layout_height="300dp"/>
                 <TextView
                     android:id="@+id/datashow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textSize="30dp"/>
+
+                <include layout="@layout/content_main" />
+
 
             </LinearLayout>
 
