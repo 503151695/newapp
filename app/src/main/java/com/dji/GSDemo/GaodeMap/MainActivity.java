@@ -369,7 +369,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         //upload.setOnClickListener(this);
         //start.setOnClickListener(this);
         //stop.setOnClickListener(this);
-        tab_bottom.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tab_bottom.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int position = tab.getPosition();
